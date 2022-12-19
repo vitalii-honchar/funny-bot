@@ -60,6 +60,8 @@ func (ns *NotificationScheduler) sendNotification(u *domain.User) <-chan bool {
 		defer close(c)
 		log.Printf("Send notification to user: %v\n", u)
 		time.Sleep(5 * time.Second)
+		u.NextNotificationTime()
+		ns.userRepository.Save(*u)
 		log.Printf("Notification was sent to user: %v\n", u)
 		c <- true
 	}()

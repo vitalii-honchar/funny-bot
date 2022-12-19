@@ -10,3 +10,7 @@ type User struct {
 	ChatId           int64
 	NotificationTime time.Time
 }
+
+func (u *User) NextNotificationTime() {
+	u.NotificationTime = u.NotificationTime.Add(24 * time.Hour)
+}
