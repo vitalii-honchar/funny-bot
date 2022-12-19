@@ -1,4 +1,4 @@
-package bot
+package telegram
 
 import (
 	"funny-bot/internal/handler"
@@ -25,12 +25,19 @@ func (b *Bot) AddHandler(h handler.MessageHandler) *Bot {
 }
 
 func (b *Bot) Start() {
-	log.Println("Starting Telegram bot...")
+	log.Println("Starting Telegram telegram...")
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
 	updates := b.bot.GetUpdatesChan(u)
 	b.handleUpdates(updates)
+}
+
+func (b *Bot) Send(mc *tgbotapi.MessageConfig) {
+	_, err := b.bot.Send(mc)
+	if err != nil {
+		log.Printf("Error during send message: message = %v, error = %v\n", mc, err)
+	}
 }
 
 func (b *Bot) handleUpdates(u tgbotapi.UpdatesChannel) {
@@ -47,11 +54,10 @@ func (b *Bot) handleUpdate(u *tgbotapi.Update) {
 	for _, h := range b.handlers {
 		if h.Matches(u.Message) {
 			resp, err := h.Handle(u.Message)
-			if err == nil {
-				_, err = b.bot.Send(resp)
-			}
 			if err != nil {
 				log.Printf("Error during processing update: update = %v, error = %v\n", u, err)
+			} else {
+				b.Send(resp)
 			}
 		}
 	}
