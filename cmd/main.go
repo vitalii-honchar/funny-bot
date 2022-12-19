@@ -2,6 +2,7 @@ package main
 
 import (
 	bot2 "funny-bot/internal/bot"
+	"funny-bot/internal/database"
 	"funny-bot/internal/handler"
 	"log"
 )
@@ -13,6 +14,8 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	bot.AddHandler(&handler.StartHandler{})
+	repository := database.NewUserRepository()
+
+	bot.AddHandler(handler.NewStartHandler(repository))
 	bot.Start()
 }

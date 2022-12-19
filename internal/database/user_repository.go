@@ -1,0 +1,40 @@
+package database
+
+import (
+	"funny-bot/internal/domain"
+)
+
+type UserRepository struct {
+	users []domain.User
+}
+
+func NewUserRepository() *UserRepository {
+	return &UserRepository{}
+}
+
+func (ur *UserRepository) Save(u domain.User) {
+	var updated bool
+	for i, user := range ur.users {
+		if user.ChatId == u.ChatId {
+			ur.users[i] = u
+			updated = true
+			break
+		}
+	}
+	if !updated {
+		ur.users = append(ur.users, u)
+	}
+}
+
+func (ur *UserRepository) FindByChatId(id int64) *domain.User {
+	for _, u := range ur.users {
+		if u.ChatId == id {
+			return &u
+		}
+	}
+	return nil
+}
+
+func (ur *UserRepository) ExistsByChatId(id int64) bool {
+	return ur.FindByChatId(id) != nil
+}
