@@ -2,6 +2,7 @@ package database
 
 import (
 	"funny-bot/internal/domain"
+	"time"
 )
 
 type UserRepository struct {
@@ -37,4 +38,14 @@ func (ur *UserRepository) FindByChatId(id int64) *domain.User {
 
 func (ur *UserRepository) ExistsByChatId(id int64) bool {
 	return ur.FindByChatId(id) != nil
+}
+
+func (ur *UserRepository) FindAllByNotificationTimeLessOrEquals(t time.Time) []domain.User {
+	var res []domain.User
+	for _, u := range ur.users {
+		if u.NotificationTime.Before(t) || u.NotificationTime == t {
+			res = append(res, u)
+		}
+	}
+	return res
 }
