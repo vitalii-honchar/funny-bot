@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"funny-bot/internal/app"
 	"funny-bot/internal/database"
 	"funny-bot/internal/domain"
+	"funny-bot/internal/time_provider"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -39,11 +39,10 @@ func (s *StartHandler) Handle(m *tgbotapi.Message) (*tgbotapi.MessageConfig, err
 }
 
 func newUser(m *tgbotapi.Message) *domain.User {
-	return &domain.User{
-		Username:         m.Chat.UserName,
-		FirstName:        m.Chat.FirstName,
-		LastName:         m.Chat.LastName,
-		ChatId:           m.Chat.ID,
-		NotificationTime: app.CurrentTime(),
-	}
+	return domain.NewUser(
+		m.Chat.FirstName,
+		m.Chat.LastName,
+		m.Chat.UserName,
+		m.Chat.ID,
+		time_provider.CurrentTime())
 }

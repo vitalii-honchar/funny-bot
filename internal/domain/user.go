@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	Id               int
@@ -25,7 +27,6 @@ func NewUser(fn string, ln string, u string, ci int64, now time.Time) *User {
 
 func nextNotificationTime(now time.Time) time.Time {
 	nt := time.Date(now.Year(), now.Month(), now.Day(), notificationHour, 0, 0, 0, now.Location())
-
 	if nt.After(now) {
 		return nt
 	}

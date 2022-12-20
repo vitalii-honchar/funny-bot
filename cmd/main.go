@@ -7,13 +7,23 @@ import (
 	"funny-bot/internal/scheduler"
 	"funny-bot/internal/telegram"
 	"log"
+	"os"
 	"time"
 )
 
-const funnyMessage = "Funny time starts! Stop your deals and go to have a fun!"
+type config struct {
+	botToken string
+}
+
+func readConfig() config {
+	return config{
+		botToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
+	}
+}
 
 func main() {
-	bot, err := telegram.NewBot("5633412468:AAFiQ4H_CJOflrFJaimGZj6LdR3NmO8xWyw")
+	cfg := readConfig()
+	bot, err := telegram.NewBot(cfg.botToken)
 	if err != nil {
 		log.Fatalln(err)
 	}

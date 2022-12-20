@@ -4,6 +4,7 @@ import (
 	"funny-bot/internal/database"
 	"funny-bot/internal/domain"
 	"funny-bot/internal/telegram"
+	"funny-bot/internal/time_provider"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 )
@@ -27,7 +28,7 @@ func (fs *FunnyService) SendNotifications() <-chan bool {
 
 	go func() {
 		defer close(res)
-		users := fs.repository.FindAllByNotificationTimeLessOrEquals(CurrentTime())
+		users := fs.repository.FindAllByNotificationTimeLessOrEquals(time_provider.CurrentTime())
 
 		var channels []<-chan bool
 

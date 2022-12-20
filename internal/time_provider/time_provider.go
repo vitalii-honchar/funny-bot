@@ -1,4 +1,4 @@
-package app
+package time_provider
 
 import (
 	"log"
