@@ -14,6 +14,8 @@ type FunnyService struct {
 	bot        *telegram.Bot
 }
 
+const funnyMessage = "It's time for funny things! Stop everything and go to fun (write code in Kotlin :))"
+
 func NewFunnyService(r *database.UserRepository, b *telegram.Bot) *FunnyService {
 	return &FunnyService{
 		repository: r,
@@ -49,7 +51,7 @@ func (fs *FunnyService) sendNotification(u *domain.User) <-chan bool {
 	go func() {
 		defer close(c)
 		log.Printf("Send notification to user: %v\n", u)
-		msg := tgbotapi.NewMessage(u.ChatId, "Funny message")
+		msg := tgbotapi.NewMessage(u.ChatId, funnyMessage)
 		fs.bot.Send(&msg)
 		u.NextNotificationTime()
 		fs.repository.Save(*u)
