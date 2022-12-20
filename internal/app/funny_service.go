@@ -6,7 +6,6 @@ import (
 	"funny-bot/internal/telegram"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
-	"time"
 )
 
 type FunnyService struct {
@@ -28,7 +27,7 @@ func (fs *FunnyService) SendNotifications() <-chan bool {
 
 	go func() {
 		defer close(res)
-		users := fs.repository.FindAllByNotificationTimeLessOrEquals(time.Now())
+		users := fs.repository.FindAllByNotificationTimeLessOrEquals(CurrentTime())
 
 		var channels []<-chan bool
 
