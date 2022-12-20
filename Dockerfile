@@ -4,4 +4,4 @@ WORKDIR /usr/src/app
 
 COPY build/cmd /usr/src/app/app
 
-CMD ["app"]
+CMD ["/usr/src/app/app"]
