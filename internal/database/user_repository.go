@@ -14,6 +14,7 @@ type UserRepository struct {
 }
 
 const selectByChatId = "SELECT * FROM tg_user WHERE chat_id = $1"
+const existsByChatId = "SELECT id FROM tg_user WHERE chat_id = $1"
 const insertUser = "INSERT INTO tg_user (first_name, last_name, username, chat_id, notification_time) VALUES ($1, $2, $3, $4, $5)"
 
 func NewUserRepository(db *sql.DB) *UserRepository {
@@ -53,8 +54,13 @@ func (ur *UserRepository) FindByChatId(id int64) <-chan *domain.User {
 
 func (ur *UserRepository) ExistsByChatId(id int64) <-chan bool {
 	return async(func(c chan bool) {
-		u := <-ur.FindByChatId(id)
-		c <- u != nil
+		r := ur.db.QueryRow(existsByChatId, id)
+		var id int64
+		if err := r.Scan(&id); err != nil {
+			c <- false
+		} else {
+			c <- true
+		}
 	})
 }
 
