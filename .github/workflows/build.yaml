@@ -30,8 +30,14 @@ jobs:
       - name: Build
         run: go build -o build -v ./...
 
+      - name: Launch test infrastructure
+        run: cd env && docker-compose up -d
+
       - name: Test
         run: go test -v ./...
+
+      - name: Stop test infrastructure
+        run: cd env && docker-compose down
 
       - name: Git Version
         id: version
