@@ -3,6 +3,7 @@ package app
 import (
 	"funny-bot/internal/database"
 	"funny-bot/internal/domain"
+	"funny-bot/internal/lib"
 	"funny-bot/internal/telegram"
 	"funny-bot/internal/time_provider"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
@@ -24,10 +25,7 @@ func NewFunnyService(r *database.UserRepository, b *telegram.Bot) *FunnyService 
 }
 
 func (fs *FunnyService) SendNotifications() <-chan bool {
-	res := make(chan bool, 1)
-
-	go func() {
-		defer close(res)
+	return lib.Async(func(res chan bool) {
 		users := fs.repository.FindAllByNotificationTimeLessOrEquals(time_provider.CurrentTime())
 
 		var channels []<-chan bool
@@ -41,15 +39,11 @@ func (fs *FunnyService) SendNotifications() <-chan bool {
 		}
 
 		res <- true
-	}()
-	return res
+	})
 }
 
 func (fs *FunnyService) sendNotification(u *domain.User) <-chan bool {
-	c := make(chan bool, 1)
-
-	go func() {
-		defer close(c)
+	return lib.Async(func(c chan bool) {
 		log.Printf("Send notification to user: %v\n", u)
 		msg := tgbotapi.NewMessage(u.ChatId, funnyMessage)
 		fs.bot.Send(&msg)
@@ -57,6 +51,5 @@ func (fs *FunnyService) sendNotification(u *domain.User) <-chan bool {
 		fs.repository.Save(u)
 		log.Printf("Notification was sent to user: %v\n", u)
 		c <- true
-	}()
-	return c
+	})
 }
