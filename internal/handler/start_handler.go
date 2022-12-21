@@ -26,7 +26,8 @@ func (s *StartHandler) Matches(m *tgbotapi.Message) bool {
 
 func (s *StartHandler) Handle(m *tgbotapi.Message) (*tgbotapi.MessageConfig, error) {
 	u := newUser(m)
-	if !s.repository.ExistsByChatId(u.ChatId) {
+	exists := <-s.repository.ExistsByChatId(u.ChatId)
+	if !exists {
 		<-s.repository.Save(u)
 	}
 

@@ -54,7 +54,7 @@ func (fs *FunnyService) sendNotification(u *domain.User) <-chan bool {
 		msg := tgbotapi.NewMessage(u.ChatId, funnyMessage)
 		fs.bot.Send(&msg)
 		u.NextNotificationTime()
-		fs.repository.Save(*u)
+		fs.repository.Save(u)
 		log.Printf("Notification was sent to user: %v\n", u)
 		c <- true
 	}()
