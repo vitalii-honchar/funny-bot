@@ -12,12 +12,14 @@ import (
 )
 
 type config struct {
-	botToken string
+	botToken        string
+	databaseConnUrl string
 }
 
 func readConfig() config {
 	return config{
-		botToken: os.Getenv("TELEGRAM_BOT_TOKEN"),
+		botToken:        os.Getenv("TELEGRAM_BOT_TOKEN"),
+		databaseConnUrl: os.Getenv("DB_CONNECTION_URL"),
 	}
 }
 
@@ -27,7 +29,11 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	repository := database.NewUserRepository()
+	db, err := database.OpenConnection(cfg.databaseConnUrl)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	repository := database.NewUserRepository(db)
 	fs := app.NewFunnyService(repository, bot)
 	ns := scheduler.NewNotificationScheduler(fs, time.Second)
 

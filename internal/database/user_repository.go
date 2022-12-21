@@ -1,16 +1,18 @@
 package database
 
 import (
+	"database/sql"
 	"funny-bot/internal/domain"
 	"time"
 )
 
 type UserRepository struct {
 	users []domain.User
+	db    *sql.DB
 }
 
-func NewUserRepository() *UserRepository {
-	return &UserRepository{}
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{db: db}
 }
 
 func (ur *UserRepository) Save(u domain.User) {
