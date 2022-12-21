@@ -1,7 +1,8 @@
 # funny-bot
+![Coverage](https://img.shields.io/badge/Coverage-68.3%25-yellow)
 
-
-I'm Funny Bot. I will send you notifications about funny time every day at 6 p.m. EST (I'm still in development mode, I will be more flexible).
+I'm Funny Bot.
+I will send you notifications about funny time every day at 6 p.m. EST (I'm still in development mode, I will be more flexible).
 So even you are working so hard, you will never forget about fun for yourself and your family!
 
 ## Docker Hub
