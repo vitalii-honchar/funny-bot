@@ -16,7 +16,7 @@ func init() {
 
 func TestUserRepository_Save(t *testing.T) {
 	repository := newTestRepository(t)
-	user := domain.NewUser("first_name", "last_name", "user_name", random.Int63(), time.Now())
+	user := newTestUser()
 
 	saved := <-repository.Save(user)
 
@@ -49,7 +49,35 @@ func TestUserRepository_Save(t *testing.T) {
 	}
 }
 
+func TestUserRepository_ExistsByChatId(t *testing.T) {
+	repository := newTestRepository(t)
+
+	t.Run("exists should be true", func(t *testing.T) {
+		user := newTestUser()
+
+		<-repository.Save(user)
+
+		exists := <-repository.ExistsByChatId(user.ChatId)
+		if !exists {
+			t.Error("Unexpected exists result: exists should be true")
+		}
+	})
+
+	t.Run("exists should be false", func(t *testing.T) {
+		user := newTestUser()
+
+		exists := <-repository.ExistsByChatId(user.ChatId)
+		if exists {
+			t.Error("Unexpected exists result: exists should be false")
+		}
+	})
+}
+
 func newTestRepository(t *testing.T) *UserRepository {
 	db := openTestConnection(t)
 	return NewUserRepository(db)
+}
+
+func newTestUser() *domain.User {
+	return domain.NewUser("first_name", "last_name", "user_name", random.Int63(), time.Now())
 }

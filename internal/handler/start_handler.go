@@ -27,7 +27,7 @@ func (s *StartHandler) Matches(m *tgbotapi.Message) bool {
 func (s *StartHandler) Handle(m *tgbotapi.Message) (*tgbotapi.MessageConfig, error) {
 	u := newUser(m)
 	if !s.repository.ExistsByChatId(u.ChatId) {
-		s.repository.Save(*u)
+		<-s.repository.Save(u)
 	}
 
 	log.Printf("Bot started: user = %+v\n", u)

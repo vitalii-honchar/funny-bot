@@ -51,8 +51,11 @@ func (ur *UserRepository) FindByChatId(id int64) <-chan *domain.User {
 	})
 }
 
-func (ur *UserRepository) ExistsByChatId(id int64) bool {
-	return ur.FindByChatId(id) != nil
+func (ur *UserRepository) ExistsByChatId(id int64) <-chan bool {
+	return async(func(c chan bool) {
+		u := <-ur.FindByChatId(id)
+		c <- u != nil
+	})
 }
 
 func (ur *UserRepository) FindAllByNotificationTimeLessOrEquals(t time.Time) []domain.User {
