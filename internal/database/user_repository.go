@@ -3,6 +3,7 @@ package database
 import (
 	"database/sql"
 	"funny-bot/internal/domain"
+	"funny-bot/internal/lib"
 	"funny-bot/internal/time_provider"
 	"log"
 	"time"
@@ -22,7 +23,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 }
 
 func (ur *UserRepository) Save(u *domain.User) <-chan bool {
-	return async(func(c chan bool) {
+	return lib.Async(func(c chan bool) {
 		_, err := ur.db.Exec(insertUser, u.FirstName, u.LastName, u.Username, u.ChatId, u.NotificationTime.In(time.UTC))
 		if err != nil {
 			log.Printf("Unexpected error during saving of user: user = %v, err = %v\n", u, err)
@@ -34,7 +35,7 @@ func (ur *UserRepository) Save(u *domain.User) <-chan bool {
 }
 
 func (ur *UserRepository) FindByChatId(id int64) <-chan *domain.User {
-	return async(func(c chan *domain.User) {
+	return lib.Async(func(c chan *domain.User) {
 		var result domain.User
 		r := ur.db.QueryRow(selectByChatId, id)
 		var nt time.Time
@@ -53,7 +54,7 @@ func (ur *UserRepository) FindByChatId(id int64) <-chan *domain.User {
 }
 
 func (ur *UserRepository) ExistsByChatId(id int64) <-chan bool {
-	return async(func(c chan bool) {
+	return lib.Async(func(c chan bool) {
 		r := ur.db.QueryRow(existsByChatId, id)
 		var id int64
 		if err := r.Scan(&id); err != nil {
@@ -72,13 +73,4 @@ func (ur *UserRepository) FindAllByNotificationTimeLessOrEquals(t time.Time) []d
 		}
 	}
 	return res
-}
-
-func async[V any](f func(chan V)) <-chan V {
-	c := make(chan V, 1)
-	go func() {
-		defer close(c)
-		f(c)
-	}()
-	return c
 }
