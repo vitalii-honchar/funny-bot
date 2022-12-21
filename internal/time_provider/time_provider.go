@@ -5,16 +5,16 @@ import (
 	"time"
 )
 
-var location *time.Location
+var EstLocation *time.Location
 
 func init() {
 	l, err := time.LoadLocation("EST")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	location = l
+	EstLocation = l
 }
 
 func CurrentTime() time.Time {
-	return time.Now().In(location)
+	return time.Now().In(EstLocation)
 }
