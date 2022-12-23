@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 instance_name='funny-bot'
 
@@ -43,7 +43,8 @@ get_instance_public_ip() {
 }
 
 start_docker_image() {
-  ssh -o StrictHostKeyChecking=no -i <(echo "$AWS_KEY") ubuntu@"$1" "docker run -e TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN -d weaxme/funny-bot:$VERSION"
+  echo "$AWS_KEY" > key.pem
+  ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@"$1" "docker run -e TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN -d weaxme/funny-bot:$VERSION"
 }
 
 destroy_previous_instance
