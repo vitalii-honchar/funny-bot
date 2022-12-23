@@ -2,6 +2,7 @@ package database
 
 import (
 	"funny-bot/internal/domain"
+	"funny-bot/internal/time_provider"
 	"math/rand"
 	"testing"
 	"time"
@@ -73,6 +74,43 @@ func TestUserRepository_ExistsByChatId(t *testing.T) {
 	})
 }
 
+func TestUserRepository_FindAllByNotificationTimeLessOrEquals(t *testing.T) {
+	repository := newTestRepository(t)
+
+	t.Run("should return list of users when them exists by notification time", func(t *testing.T) {
+		user1 := newTestUser()
+		user2 := newTestUser()
+		user3 := newTestUser()
+
+		user2.NotificationTime = time.Now().Add(-7 * time.Hour).In(time_provider.EstLocation)
+		user1.NotificationTime = time.Now().Add(-10 * time.Hour).In(time_provider.EstLocation)
+		user3.NotificationTime = time.Now().Add(-9 * time.Hour).In(time_provider.EstLocation)
+		<-repository.Save(user1)
+		<-repository.Save(user2)
+		<-repository.Save(user3)
+
+		actual := <-repository.FindAllByNotificationTimeLessOrEquals(time.Now().Add(-8 * time.Hour))
+
+		if len(actual) < 2 {
+			t.Fatalf("User list length should be greater or equals 2: actual = %d\n", len(actual))
+		}
+		if !userExistsInSlice(actual, user1) {
+			t.Fatalf("User not exists in list: actual = %+v, expected = %+v\n", actual, user1)
+		}
+		if !userExistsInSlice(actual, user3) {
+			t.Fatalf("User not exists in list: actual = %v, expected = %v\n", actual, user3)
+		}
+	})
+
+	t.Run("should return empty list of users when them not exists by notification time", func(t *testing.T) {
+		actual := <-repository.FindAllByNotificationTimeLessOrEquals(time.Now().Add(-24 * time.Hour))
+
+		if len(actual) != 0 {
+			t.Fatalf("User list length is not empty: actual = %d\n", len(actual))
+		}
+	})
+}
+
 func newTestRepository(t *testing.T) *UserRepository {
 	db := openTestConnection(t)
 	return NewUserRepository(db)
@@ -80,4 +118,13 @@ func newTestRepository(t *testing.T) *UserRepository {
 
 func newTestUser() *domain.User {
 	return domain.NewUser("first_name", "last_name", "user_name", random.Int63(), time.Now())
+}
+
+func userExistsInSlice(users []*domain.User, u *domain.User) bool {
+	for _, user := range users {
+		if user.ChatId == u.ChatId {
+			return true
+		}
+	}
+	return false
 }
