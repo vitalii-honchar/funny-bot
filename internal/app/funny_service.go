@@ -26,12 +26,12 @@ func NewFunnyService(r *database.UserRepository, b *telegram.Bot) *FunnyService 
 
 func (fs *FunnyService) SendNotifications() <-chan bool {
 	return lib.Async(func(res chan bool) {
-		users := fs.repository.FindAllByNotificationTimeLessOrEquals(time_provider.CurrentTime())
+		users := <-fs.repository.FindAllByNotificationTimeLessOrEquals(time_provider.CurrentTime())
 
 		var channels []<-chan bool
 
 		for _, u := range users {
-			channels = append(channels, fs.sendNotification(&u))
+			channels = append(channels, fs.sendNotification(u))
 		}
 
 		for _, c := range channels {
