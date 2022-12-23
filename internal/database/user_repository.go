@@ -10,8 +10,7 @@ import (
 )
 
 type UserRepository struct {
-	users []domain.User
-	db    *sql.DB
+	db *sql.DB
 }
 
 const selectByChatId = "SELECT * FROM tg_user WHERE chat_id = $1"
