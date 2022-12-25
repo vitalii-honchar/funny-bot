@@ -99,9 +99,16 @@ jobs:
           github_token: ${{ github.token }}
           branch: ${{ github.head_ref }}
 
-      - name: Configure AWS credentials from Production account
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-region: us-west-2
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Deploy to the PROD
+        env:
+          AWS_SSH_KEY: '${{ secrets.AWS_SSH_KEY }}'
+          TELEGRAM_BOT_TOKEN: '${{ secrets.TELEGRAM_BOT_TOKEN }}'
+          DB_CONNECTION_URL: '${{ secrets.DB_CONNECTION_URL }}'
+        run: deployments/deploy.sh

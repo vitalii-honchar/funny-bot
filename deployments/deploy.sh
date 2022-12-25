@@ -44,7 +44,7 @@ get_instance_public_ip() {
 
 start_docker_image() {
   echo "$AWS_SSH_KEY" > key.pem
-  ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@"$1" "docker run -e TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN -d weaxme/funny-bot:$VERSION"
+  ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@"$1" "docker run -e TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN -e DB_CONNECTION_URL=$DB_CONNECTION_URL -d weaxme/funny-bot:0.0.1"
 }
 
 destroy_previous_instance
