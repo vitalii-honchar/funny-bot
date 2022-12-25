@@ -46,7 +46,7 @@ jobs:
 
       - name: Git Version
         id: version
-        uses: codacy/git-version@2.7.1
+        run: echo "version=1.0.$(git rev-list --all --count)" >> $GITHUB_OUTPUT
 
       - name: Log in to Docker Hub
         uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
