@@ -56,8 +56,3 @@ echo "Initializing instance $instance_id"
 ip_address=$(get_instance_public_ip "$instance_id")
 
 start_docker_image "$ip_address"
-
-aws ec2 describe-instances \
-  --instance-ids "$instance_id" \
-  --query "Reservations[*].Instances[*].{InstanceID:InstanceId,Name:Tags[?Key=='Name']|[0].Value,Status:State.Name,IP:PublicIpAddress}" \
-  --output table --no-cli-pager
