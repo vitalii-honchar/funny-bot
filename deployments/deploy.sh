@@ -43,7 +43,7 @@ get_instance_public_ip() {
 }
 
 start_docker_image() {
-  echo "$AWS_KEY" > key.pem
+  echo "$AWS_SSH_KEY" > key.pem
   ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@"$1" "docker run -e TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN -d weaxme/funny-bot:$VERSION"
 }
 
