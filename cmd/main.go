@@ -39,7 +39,7 @@ func runMigrations(db *sql.DB) error {
 		return err
 	}
 	err = m.Up()
-	log.Printf("Database migration: %s\n", err)
+	log.Printf("Database migration: %v\n", err)
 	return nil
 }
 
