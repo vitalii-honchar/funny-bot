@@ -8,6 +8,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -117,5 +119,5 @@ jobs:
           AWS_SSH_KEY: '${{ secrets.AWS_SSH_KEY }}'
           TELEGRAM_BOT_TOKEN: '${{ secrets.TELEGRAM_BOT_TOKEN }}'
           DB_CONNECTION_URL: '${{ secrets.DB_CONNECTION_URL }}'
-          VERSION: '${{ steps.version.outputs.version }}'
+          VERSION: '${{ needs.build.outputs.version }}'
         run: deployments/deploy.sh
