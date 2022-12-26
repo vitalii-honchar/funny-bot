@@ -15,7 +15,9 @@ type UserRepository struct {
 
 const selectByChatId = "SELECT * FROM tg_user WHERE chat_id = $1"
 const existsByChatId = "SELECT id FROM tg_user WHERE chat_id = $1"
-const insertUser = "INSERT INTO tg_user (first_name, last_name, username, chat_id, notification_time) VALUES ($1, $2, $3, $4, $5)"
+const insertUser = "INSERT INTO tg_user (first_name, last_name, username, chat_id, notification_time) VALUES ($1, $2, $3, $4, $5)" +
+	"ON CONFLICT (chat_id)" +
+	"DO UPDATE SET first_name = $1, last_name = $2, username = $3, notification_time = $5"
 const selectByNotificationTime = "SELECT * FROM tg_user WHERE notification_time <= $1 ORDER BY notification_time"
 
 func NewUserRepository(db *sql.DB) *UserRepository {
