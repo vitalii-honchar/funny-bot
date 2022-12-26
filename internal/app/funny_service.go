@@ -44,12 +44,12 @@ func (fs *FunnyService) SendNotifications() <-chan bool {
 
 func (fs *FunnyService) sendNotification(u *domain.User) <-chan bool {
 	return lib.Async(func(c chan bool) {
-		log.Printf("Send notification to user: %v\n", u)
+		log.Printf("Send notification to user: %+v\n", u)
 		msg := tgbotapi.NewMessage(u.ChatId, funnyMessage)
 		fs.bot.Send(&msg)
 		u.NextNotificationTime()
 		fs.repository.Save(u)
-		log.Printf("Notification was sent to user: %v\n", u)
+		log.Printf("Notification was sent to user: %+v\n", u)
 		c <- true
 	})
 }
